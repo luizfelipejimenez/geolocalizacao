@@ -1,7 +1,8 @@
 //Importando arquivo json da localizações das fazendas
 import jsonData from '../ArquivosJson/AREA_IMOVEL.json' assert {type: 'json'}; 
+import jsonData2 from '../ArquivosJson/teste.json' assert {type: 'json'}; 
 
-console.log(jsonData);
+//console.log(jsonData);
 
 const poligonos = jsonData.features.map(feature => {
   const coords = feature.geometry.coordinates;
@@ -20,9 +21,12 @@ const poligonos = jsonData.features.map(feature => {
   return {
     type: 'Feature',
     properties,
-    geometry: polygon.geometry
+    polygon: polygon,
+    geometry: polygon.geometry,
   };
 });
+
+console.log(poligonos);
 
 
 //adicionando o mapa
@@ -70,14 +74,29 @@ var myStyle = {
 // Calcula as sobreposições entre os polígonos
 function calcularSobreposicoes(jsonData) {
     const sobreposicoes = [];
-    for (let i = 0; i < jsonData.length; i++) {
-      for (let j = i + 1; j < jsonData.length; j++) {
-        const sobreposicao = turf.intersect(jsonData[i], jsonData[j]);
-        if (sobreposicao) {
-          sobreposicoes.push(sobreposicao);
+    console.log(jsonData);
+    for (let i = 0; i < jsonData.length -1; i++) {
+      //console.log(jsonData[i]);
+      //for (let j = i + 1; j < jsonData.features.length; j++) {
+        //console.log(jsonData.features[i], jsonData.features[j]);
+        //jsonData[i] = turf.polygon(jsonData[i]);
+        //jsonData[j] = turf.polygon(jsonData[j]);
+        //if(jsonData.features[i].geometry.coordinates[0].length > 4 && jsonData.features[i+1].geometry.coordinates[0].length > 4){
+          
+        //console.log(jsonData.features[i].geometry.coordinates[0].length, jsonData.features[i+1].geometry.coordinates[0].length);
+        //console.log(jsonData.features[i])
+        const sobreposicao = turf.intersect(
+          jsonData[i].polygon, 
+          jsonData[i+1].polygon
+        );
+        console.log(sobreposicao);
+       // }
+        if (null != sobreposicao) {
+        sobreposicoes.push(sobreposicao);
         }
-      }
+     // }
     }
+    console.log(sobreposicoes)
     return sobreposicoes;
   }
   
@@ -89,6 +108,7 @@ function calcularSobreposicoes(jsonData) {
 
   
   // Calcula as sobreposições
+  console.log(jsonData);
   const sobreposicoes = calcularSobreposicoes(poligonos);
   
   // Adiciona as sobreposições no mapa
